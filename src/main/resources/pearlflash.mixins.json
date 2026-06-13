@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "com.pearlflash.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "EnderPearlEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
