@@ -2,32 +2,54 @@ package com.pearlflash;
 
 import com.pearlflash.hud.IFrameHud;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.projectile.thrown.EnderPearlEntity;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class PearlFlashClient implements ClientModInitializer {
 
-    // 모드 전역 상태 — 착지 감지 시 mixin이 여기에 기록
-    public static long iframeEndTime = -1; // System.nanoTime() 기준 무적 종료 시각
-
-    // 무적 시간: 1틱 = 50ms (= 50_000_000 ns)
+    public static long iframeEndTime = -1;
     public static final long IFRAME_DURATION_NS = 50_000_000L;
+
+    private static final Set<Integer> trackedPearls = new HashSet<>();
 
     @Override
     public void onInitializeClient() {
-        // 매 프레임 HUD 렌더링 콜백 등록
         HudRenderCallback.EVENT.register(IFrameHud::render);
+
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (client.player == null || client.world == null) return;
+
+            Set<Integer> currentPearls = new HashSet<>();
+
+            client.world.getEntities().forEach(entity -> {
+                if (entity instanceof EnderPearlEntity pearl) {
+                    if (pearl.getOwner() == client.player) {
+                        currentPearls.add(pearl.getId());
+                    }
+                }
+            });
+
+            // 이전 틱에 있던 펄이 사라졌으면 = 착지한 것
+            for (int id : trackedPearls) {
+                if (!currentPearls.contains(id)) {
+                    onPearlLand();
+                }
+            }
+
+            trackedPearls.clear();
+            trackedPearls.addAll(currentPearls);
+        });
     }
 
-    /**
-     * Mixin에서 호출 — 엔더펄 착지 감지 시 무적 타이머 시작
-     */
     public static void onPearlLand() {
         iframeEndTime = System.nanoTime() + IFRAME_DURATION_NS;
     }
 
-    /**
-     * 현재 남은 무적 시간 (ms). 0이면 종료 또는 미발동.
-     */
     public static long getRemainingMs() {
         if (iframeEndTime < 0) return -1L;
         long remaining = (iframeEndTime - System.nanoTime()) / 1_000_000L;
