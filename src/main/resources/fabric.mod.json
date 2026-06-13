@@ -1,24 +1,13 @@
 {
   "schemaVersion": 1,
   "id": "pearlflash",
-  "version": "${version}",
+  "version": "1.0.0",
   "name": "Pearl Flash HUD",
   "description": "엔더펄 착지 직후 무적 i-frame 타이머를 HUD에 표시합니다.",
   "authors": ["you"],
-  "contact": {},
   "license": "MIT",
   "environment": "client",
   "entrypoints": {
-    "client": [
-      "com.pearlflash.PearlFlashClient"
-    ]
+    "client": ["com.pearlflash.PearlFlashClient"]
   },
-  "mixins": [
-    "pearlflash.mixins.json"
-  ],
-  "depends": {
-    "fabricloader": ">=0.18.4",
-    "fabric-api": "*",
-    "minecraft": "~26.1.2"
-  }
-}
+  "
