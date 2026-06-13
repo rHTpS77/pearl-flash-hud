@@ -1,4 +1,16 @@
-"mixins": ["pearlflash.mixins.json"],
+{
+  "schemaVersion": 1,
+  "id": "pearlflash",
+  "version": "1.0.0",
+  "name": "Pearl Flash HUD",
+  "description": "엔더펄 착지 직후 무적 i-frame 타이머를 HUD에 표시합니다.",
+  "authors": ["you"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["com.pearlflash.PearlFlashClient"]
+  },
+  "mixins": ["pearlflash.mixins.json"],
   "depends": {
     "fabricloader": ">=0.16.10",
     "fabric-api": "*",
